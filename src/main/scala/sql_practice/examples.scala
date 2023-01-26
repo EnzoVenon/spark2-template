@@ -43,11 +43,19 @@ object examples {
     val demoDF = spark.read.json("data/input/demographie_par_commune.json")
     val depDF = spark.read.csv("data/input/departements.txt")
 
-    demoDF.select("population").agg(sum("population").as("France_pop")).show()
+    demoDF.select("population")
+      .agg(sum("population").as("France_pop"))
+      .show()
 
-    demoDF.groupBy("Departement").agg(sum("Population").as("pop")).orderBy($"pop".desc).show()
+    demoDF.groupBy("Departement")
+      .agg(sum("Population").as("pop"))
+      .orderBy($"pop".desc)
+      .show()
 
-    depDF.join(demoDF, demoDF("Departement") === depDF("_c1")).groupBy("_c0").agg(sum("Population").as("pop")).orderBy($"pop".desc).show()
+    depDF.join(demoDF, demoDF("Departement") === depDF("_c1"))
+      .groupBy($"_c0".as("Nom_departement")).agg(sum("Population").as("pop"))
+      .orderBy($"pop".desc)
+      .show()
 
   }
 }
